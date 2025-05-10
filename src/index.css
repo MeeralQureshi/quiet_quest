@@ -1,0 +1,105 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+/* Reset default styles (optional but recommended) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Root variables for colors */
+:root {
+  --color-bg: #1E2A3C; /* overall dark background, optional */
+  --modal-bg: #37475A; /* modal background */
+  --primary-accent: #F9D76E; /* moon yellow */
+  --secondary-accent: #FCD34D; /* lighter yellow for highlights */
+  --text-primary: #F0F0F0; /* main text */
+  --text-secondary: #A0A0A0; /* secondary text */
+  --error-color: #FF6B6B;
+  --success-color: #8BC34A;
+  --button-hover: #FBBF24; /* hover color for icons/buttons */
+}
+
+/* Apply global styles */
+body {
+  font-family: 'Baloo 2', cursive;
+  background-color: var(--color-bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 16px;
+  padding: 1rem;
+}
+
+/* Headings and labels */
+h1, h2, h3, h4 {
+  font-family: 'Baloo 2', cursive;
+  color: var(--text-primary);
+}
+
+/* Links and buttons (basic reset for buttons) */
+button {
+  font-family: 'Baloo 2', cursive;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Card / modal styles */
+.card {
+  background-color: var(--modal-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Form inputs */
+input[type="text"],
+input[type="time"],
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4A5568; /* Tailwind gray-700 */
+  border: none;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: 'Baloo 2', cursive;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--primary-accent);
+}
+
+/* Utility classes for spacing */
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.p-4 { padding: 1rem; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.space-x-2 > * + * { margin-left: 0.5rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+
+/* Scrollbar (optional) for better aesthetic */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #2f3e4f; /* dark track */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--primary-accent);
+  border-radius: 4px;
+}
