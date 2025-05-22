@@ -1,5 +1,9 @@
 /* Import Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Reset default styles (optional but recommended) */
 * {
@@ -23,29 +27,61 @@
 
 /* Apply global styles */
 body {
-  font-family: 'Baloo 2', cursive;
-  background-color: var(--color-bg);
+  margin: 0;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #232e4a;
   color: var(--text-primary);
   line-height: 1.6;
   font-size: 16px;
-  padding: 1rem;
+  padding: 0;
+  font-weight: 400;
+  min-height: 100vh;
+  position: relative;
+}
+
+.starry-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
 }
 
 /* Headings and labels */
-h1, h2, h3, h4 {
-  font-family: 'Baloo 2', cursive;
+h1 {
+  font-family: 'Nunito', sans-serif;
   color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-family: 'Nunito', sans-serif;
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+h3, h4 {
+  font-family: 'Nunito', sans-serif;
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 /* Links and buttons (basic reset for buttons) */
 button {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Nunito', sans-serif;
   cursor: pointer;
   border: none;
   background: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
+  font-weight: 600;
 }
 
 button:hover {
@@ -71,7 +107,7 @@ textarea {
   border: none;
   border-radius: 6px;
   color: var(--text-primary);
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Nunito', sans-serif;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
 }
@@ -90,16 +126,20 @@ input[type="checkbox"] {
 .space-x-2 > * + * { margin-left: 0.5rem; }
 .space-y-2 > * + * { margin-top: 0.5rem; }
 
-/* Scrollbar (optional) for better aesthetic */
-body::-webkit-scrollbar {
+/* Custom scrollbar */
+::-webkit-scrollbar {
   width: 8px;
 }
 
-body::-webkit-scrollbar-track {
-  background: #2f3e4f; /* dark track */
+::-webkit-scrollbar-track {
+  background: #2C3E50;
 }
 
-body::-webkit-scrollbar-thumb {
-  background-color: var(--primary-accent);
+::-webkit-scrollbar-thumb {
+  background: #34495E;
   border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #95A5A6;
 }

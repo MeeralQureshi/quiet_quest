@@ -12,25 +12,26 @@
 - [ ] Sync across devices with account support
 - [ ] Animated mascot for each nap session
 
+### 📈 Stats & Streaks
+- [ ] Track nap count + total nap time (per day)
+- [ ] Track completed quests per nap
+- [ ] Display daily streak
+- [ ] Store stats locally
+
 ---
 
 ## ✅ To Do
 
 ### 💤 Nap Sessions
-- [ ] Create new nap session (e.g., Morning Nap)
 - [ ] Start/stop nap timer per session
 - [ ] Save nap duration
 - [ ] Delete/edit nap sessions
 - [ ] Reset nap data daily
 
 ### 📋 Quest Management (Per Nap)
-- [ ] Add Quest to a specific nap session
-- [ ] Edit/Delete Quest
-- [ ] Store quests under nap sessions in LocalStorage
 - [ ] Visual indicator for energy level & time estimate
 
 ### 🔄 Quest Status Flow
-- [ ] Mark quest as In Progress / Done
 - [ ] Filter or separate quests by status within nap
 
 ### 🌙 Focus Mode
@@ -38,29 +39,25 @@
 - [ ] Countdown with pause/resume
 - [ ] Motivational messages + soft visuals
 
-### 📈 Stats & Streaks
-- [ ] Track nap count + total nap time (per day)
-- [ ] Track completed quests per nap
-- [ ] Display daily streak
-- [ ] Store stats locally
-
-### 🎨 Styling
-- [ ] Dark blue calming theme
-- [ ] Nap cards + Quest list styled with TailwindCSS
-- [ ] Fun emoji support
-- [ ] Rounded corners, soft drop shadows, cozy UI
-
 ---
 
 ## 🔧 In Progress
-
-- [ ] NapSession and Quest component scaffolding
+- [ ] Edit/Delete Quest
+- [ ] Mark quest as In Progress / Done
 - [ ] Nap timer logic (setInterval & state sync)
-- [ ] UI design prototype in Figma or Storybook
 
 ---
 
 ## ✅ Done
 - [x] React + Tailwind setup
+- [x] Create new nap session (e.g., Morning Nap)
+- [x] Add Quest to a specific nap session
+- [x] Store quests under nap sessions in LocalStorage
+- [x] NapSession and Quest component scaffolding
+- [x] Dark blue calming theme
+- [x] Nap cards + Quest list styled with TailwindCSS
+- [x] Fun emoji support
+- [x] Rounded corners, soft drop shadows, cozy UI
+
 
 ---
