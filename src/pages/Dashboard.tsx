@@ -73,6 +73,7 @@ const Dashboard: React.FC = () => {
   const [showAddNap, setShowAddNap] = React.useState(false);
   const [addQuestSessionId, setAddQuestSessionId] = React.useState<string | null>(null);
   const [editQuestData, setEditQuestData] = useState<{ sessionId: string; quest: Quest } | null>(null);
+  const [editSessionData, setEditSessionData] = useState<{ sessionId: string; name: string } | null>(null);
 
   useEffect(() => {
     // Reset daily data on component mount
@@ -182,6 +183,21 @@ const Dashboard: React.FC = () => {
     saveNapSessions(updatedSessions);
   };
 
+  const deleteNapSession = (sessionId: string) => {
+    const updatedSessions = napSessions.filter(session => session.id !== sessionId);
+    setNapSessions(updatedSessions);
+    saveNapSessions(updatedSessions);
+  };
+
+  const handleEditSession = (sessionId: string, newName: string) => {
+    const updatedSessions = napSessions.map(session =>
+      session.id === sessionId ? { ...session, name: newName } : session
+    );
+    setNapSessions(updatedSessions);
+    saveNapSessions(updatedSessions);
+    setEditSessionData(null);
+  };
+
   // Calculate total nap time for all sessions today
   const totalNapMs = napSessions.reduce((sum, session) => {
     if (session.startTime && session.endTime) {
@@ -265,7 +281,13 @@ const Dashboard: React.FC = () => {
             return (
               <div key={session.id} className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-5 flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-2xl text-white font-extrabold">{session.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl text-white font-extrabold">{session.name}</span>
+                    <span className="flex items-center ml-1">
+                      <button onClick={() => setEditSessionData({ sessionId: session.id, name: session.name })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit Session" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
+                      <button onClick={() => deleteNapSession(session.id)} className="text-blue-200 hover:text-red-400 text-base p-1" title="Delete Session" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
+                    </span>
+                  </div>
                   <div className="text-lg text-blue-200 font-bold">{formatDuration(sessionMs)}</div>
                 </div>
                 <div className="flex flex-col gap-2 mb-1">
@@ -353,6 +375,37 @@ const Dashboard: React.FC = () => {
             initialEnergyLevel={editQuestData.quest.energyLevel}
             isEdit
           />
+        )}
+        {/* Edit Nap Session Modal */}
+        {editSessionData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60" onClick={() => setEditSessionData(null)}>
+            <form
+              className="bg-[#18305a] rounded-3xl shadow-2xl px-8 py-10 w-[90vw] max-w-xl flex flex-col items-center relative"
+              style={{ minWidth: 320 }}
+              onClick={e => e.stopPropagation()}
+              onSubmit={e => {
+                e.preventDefault();
+                if (!editSessionData.name.trim()) return;
+                handleEditSession(editSessionData.sessionId, editSessionData.name.trim());
+              }}
+            >
+              <h2 className="text-4xl font-extrabold text-[#f7f3e8] mb-8 tracking-tight">Edit Nap Session</h2>
+              <input
+                className="w-full bg-[#f7f3e8] text-[#18305a] text-2xl font-bold rounded-2xl px-6 py-4 mb-8 focus:outline-none placeholder-[#18305a]/60"
+                placeholder="Nap name"
+                value={editSessionData.name}
+                onChange={e => setEditSessionData({ ...editSessionData, name: e.target.value })}
+                autoFocus
+              />
+              <button
+                type="submit"
+                className={`w-full rounded-2xl py-4 text-2xl font-extrabold transition-all ${editSessionData.name.trim() ? 'bg-[#22305a] text-[#f7f3e8] hover:bg-[#2c3e50]' : 'bg-[#22305a]/60 text-[#f7f3e8]/60 cursor-not-allowed'}`}
+                disabled={!editSessionData.name.trim()}
+              >
+                Save Changes
+              </button>
+            </form>
+          </div>
         )}
       </div>
     </div>
