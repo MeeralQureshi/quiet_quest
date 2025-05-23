@@ -70,7 +70,6 @@ const StarryBackground = () => (
 const Dashboard: React.FC = () => {
   const [napSessions, setNapSessions] = useState<NapSession[]>([]);
   const [newNapName, setNewNapName] = useState('');
-  const [timerActive, setTimerActive] = React.useState(true);
   const [showAddNap, setShowAddNap] = React.useState(false);
   const [addQuestSessionId, setAddQuestSessionId] = React.useState<string | null>(null);
   const [editQuestData, setEditQuestData] = useState<{ sessionId: string; quest: Quest } | null>(null);
@@ -291,17 +290,13 @@ const Dashboard: React.FC = () => {
           <p className="mt-2 text-lg md:text-xl text-blue-200 font-medium tracking-wide text-center">Your magical quest begins when the baby naps.</p>
         </div>
         {/* Nap Timer Card */}
-        <div className="w-full mb-6">
-          <div className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-6 flex items-center justify-between">
-            <div>
-              <div className="text-2xl text-blue-100 font-bold mb-1">Nap Time</div>
-              <div className="text-4xl md:text-5xl font-extrabold text-white tracking-wider">{formatTime(totalNapMs)}</div>
-            </div>
-            <button className="ml-4 bg-[#31416a] rounded-full w-14 h-14 flex items-center justify-center text-3xl text-blue-100 shadow-md">
-              {timerActive ? <span>⏸️</span> : <span>▶️</span>}
-            </button>
-          </div>
-        </div>
+        <NapTimer 
+          napSessions={napSessions}
+          onSessionsUpdate={(sessions) => {
+            setNapSessions(sessions);
+            saveNapSessions(sessions);
+          }}
+        />
         {/* Nap Sessions Section */}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="napSessions" type="SESSION">
