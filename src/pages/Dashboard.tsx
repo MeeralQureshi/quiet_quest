@@ -5,6 +5,7 @@ import QuestCard from '../components/QuestCard';
 import { NapSession, Quest } from '../types';
 import { getNapSessions, saveNapSessions, resetDailyData } from '../utils/storage';
 import NapTimer from '../components/NapTimer';
+import AddQuestModal from '../components/AddQuestModal';
 
 // Star SVGs for background
 const StarryBackground = () => (
@@ -70,6 +71,7 @@ const Dashboard: React.FC = () => {
   const [newNapName, setNewNapName] = useState('');
   const [timerActive, setTimerActive] = React.useState(true);
   const [showAddNap, setShowAddNap] = React.useState(false);
+  const [addQuestSessionId, setAddQuestSessionId] = React.useState<string | null>(null);
 
   useEffect(() => {
     // Reset daily data on component mount
@@ -206,23 +208,53 @@ const Dashboard: React.FC = () => {
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   };
 
+  // Add quest with modal data
+  const handleAddQuest = (sessionId: string, quest: { title: string; estimatedTime: number; energyLevel: string }) => {
+    const newQuest = {
+      id: uuidv4(),
+      title: quest.title,
+      estimatedTime: quest.estimatedTime,
+      energyLevel: quest.energyLevel as '🧘' | '⚡' | '🚀',
+      emoji: quest.energyLevel, // Default emoji to energy for now
+      status: 'pending' as const,
+      createdAt: Date.now(),
+    };
+    const updatedSessions = napSessions.map(session =>
+      session.id === sessionId
+        ? { ...session, quests: [...session.quests, newQuest] }
+        : session
+    );
+    setNapSessions(updatedSessions);
+    saveNapSessions(updatedSessions);
+    setAddQuestSessionId(null);
+  };
+
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden font-baloo bg-transparent">
       <StarryBackground />
-      <div className="relative z-10 w-full max-w-xl mx-auto px-4 pt-12 pb-8 flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 pt-10 pb-8 flex flex-col items-center">
+        {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <div className="flex items-center space-x-2">
             <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">QuietQuest</h1>
-            <span className="text-4xl md:text-5xl" role="img" aria-label="moon">🌙</span>
+            <span className="text-5xl md:text-6xl ml-2" role="img" aria-label="moon">🌙</span>
           </div>
           <p className="mt-2 text-lg md:text-xl text-blue-200 font-medium tracking-wide text-center">Your magical quest begins when the baby naps.</p>
         </div>
-        <NapTimer
-          time={formatTime(totalNapMs)}
-          isActive={timerActive}
-          onToggle={() => setTimerActive((v) => !v)}
-        />
-        <div className="w-full">
+        {/* Nap Timer Card */}
+        <div className="w-full mb-6">
+          <div className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-6 flex items-center justify-between">
+            <div>
+              <div className="text-2xl text-blue-100 font-bold mb-1">Nap Time</div>
+              <div className="text-4xl md:text-5xl font-extrabold text-white tracking-wider">{formatTime(totalNapMs)}</div>
+            </div>
+            <button className="ml-4 bg-[#31416a] rounded-full w-14 h-14 flex items-center justify-center text-3xl text-blue-100 shadow-md">
+              {timerActive ? <span>⏸️</span> : <span>▶️</span>}
+            </button>
+          </div>
+        </div>
+        {/* Nap Sessions Section */}
+        <div className="w-full space-y-5">
           {napSessions.map(session => {
             // Calculate session duration
             let sessionMs = 0;
@@ -230,22 +262,24 @@ const Dashboard: React.FC = () => {
               sessionMs = session.endTime - session.startTime;
             }
             return (
-              <NapSessionCard
-                key={session.id}
-                session={session}
-                duration={formatDuration(sessionMs)}
-                onAddQuest={addQuest}
-              >
-                {session.quests.map(quest => (
-                  <QuestCard
-                    key={quest.id}
-                    quest={quest}
-                    onStatusChange={(id, status) => updateQuestStatus(session.id, id, status)}
-                    onDelete={(id) => deleteQuest(session.id, id)}
-                    onEdit={(id, updatedQuest) => editQuest(session.id, id, updatedQuest)}
-                  />
-                ))}
-              </NapSessionCard>
+              <div key={session.id} className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-5 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-2xl text-white font-extrabold">{session.name}</div>
+                  <div className="text-lg text-blue-200 font-bold">{formatDuration(sessionMs)}</div>
+                </div>
+                <div className="flex flex-col gap-2 mb-1">
+                  {session.quests.map(quest => (
+                    <div key={quest.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <input type="checkbox" checked={quest.status === 'completed'} onChange={() => updateQuestStatus(session.id, quest.id, quest.status === 'completed' ? 'pending' : 'completed')} className="w-5 h-5 rounded border-2 border-blue-300 bg-[#22305a] focus:ring-0" />
+                        <span className={`text-lg font-bold ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
+                      </div>
+                      <span className="text-lg text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setAddQuestSessionId(session.id)} className="text-blue-300 text-lg font-bold mt-1 hover:underline text-left w-fit">+ Add Quest</button>
+              </div>
             );
           })}
         </div>
@@ -280,12 +314,19 @@ const Dashboard: React.FC = () => {
           ) : (
             <button
               onClick={() => setShowAddNap(true)}
-              className="w-full bg-[#31416a] text-blue-100 font-extrabold text-lg py-4 rounded-full shadow-lg flex items-center justify-center hover:bg-[#3b4a6b] transition border-2 border-blue-300"
+              className="w-full bg-[#25325a] text-blue-200 font-extrabold text-2xl py-5 rounded-3xl shadow-lg flex items-center justify-center hover:bg-[#31416a] transition border-2 border-blue-300 mt-2"
             >
               + Add Nap Session
             </button>
           )}
         </div>
+        {/* Add Quest Modal */}
+        {addQuestSessionId && (
+          <AddQuestModal
+            onAdd={quest => handleAddQuest(addQuestSessionId, quest)}
+            onClose={() => setAddQuestSessionId(null)}
+          />
+        )}
       </div>
     </div>
   );
