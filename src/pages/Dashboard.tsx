@@ -6,6 +6,7 @@ import { NapSession, Quest } from '../types';
 import { getNapSessions, saveNapSessions, resetDailyData } from '../utils/storage';
 import NapTimer from '../components/NapTimer';
 import AddQuestModal from '../components/AddQuestModal';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 // Star SVGs for background
 const StarryBackground = () => (
@@ -246,6 +247,24 @@ const Dashboard: React.FC = () => {
     setAddQuestSessionId(null);
   };
 
+  // Handle drag end for quest reordering
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+    // Only allow reordering within the same nap session
+    if (source.droppableId !== destination.droppableId) return;
+    if (source.index === destination.index) return;
+    setNapSessions(prevSessions => prevSessions.map(session => {
+      if (session.id !== source.droppableId) return session;
+      const quests = Array.from(session.quests);
+      const [removed] = quests.splice(source.index, 1);
+      quests.splice(destination.index, 0, removed);
+      const updated = { ...session, quests };
+      saveNapSessions(prevSessions.map(s => s.id === session.id ? updated : s));
+      return updated;
+    }));
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden font-baloo bg-transparent">
       <StarryBackground />
@@ -271,48 +290,65 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         {/* Nap Sessions Section */}
-        <div className="w-full space-y-5">
-          {napSessions.map(session => {
-            // Calculate session duration
-            let sessionMs = 0;
-            if (session.startTime && session.endTime) {
-              sessionMs = session.endTime - session.startTime;
-            }
-            return (
-              <div key={session.id} className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-5 flex flex-col">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl text-white font-extrabold">{session.name}</span>
-                    <span className="flex items-center ml-1">
-                      <button onClick={() => setEditSessionData({ sessionId: session.id, name: session.name })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit Session" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
-                      <button onClick={() => deleteNapSession(session.id)} className="text-blue-200 hover:text-red-400 text-base p-1" title="Delete Session" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
-                    </span>
-                  </div>
-                  <div className="text-lg text-blue-200 font-bold">{formatDuration(sessionMs)}</div>
-                </div>
-                <div className="flex flex-col gap-2 mb-1">
-                  {session.quests.map(quest => (
-                    <div key={quest.id} className="flex items-center justify-between gap-2 py-1">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <input type="checkbox" checked={quest.status === 'completed'} onChange={() => updateQuestStatus(session.id, quest.id, quest.status === 'completed' ? 'pending' : 'completed')} className="w-5 h-5 rounded border-2 border-blue-300 bg-[#22305a] focus:ring-0" />
-                        <span className={`text-lg font-bold truncate ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
-                      </div>
-                      <div className="flex items-center gap-3 flex-shrink-0 ml-2">
-                        <span className="text-lg md:text-xl flex-shrink-0">{quest.emoji}</span>
-                        <span className="text-base text-blue-200 font-bold">{quest.estimatedTime} m</span>
-                        <span className="flex items-center ml-1">
-                          <button onClick={() => setEditQuestData({ sessionId: session.id, quest })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
-                          <button onClick={() => deleteQuest(session.id, quest.id)} className="text-blue-200 hover:text-red-400 text-base p-1 ml-0.5" title="Delete" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
-                        </span>
-                      </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="w-full space-y-5">
+            {napSessions.map(session => {
+              // Calculate session duration
+              let sessionMs = 0;
+              if (session.startTime && session.endTime) {
+                sessionMs = session.endTime - session.startTime;
+              }
+              return (
+                <div key={session.id} className="rounded-3xl bg-[#25325a] shadow-lg px-6 py-5 flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl text-white font-extrabold">{session.name}</span>
+                      <span className="flex items-center ml-1">
+                        <button onClick={() => setEditSessionData({ sessionId: session.id, name: session.name })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit Session" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
+                        <button onClick={() => deleteNapSession(session.id)} className="text-blue-200 hover:text-red-400 text-base p-1" title="Delete Session" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
+                      </span>
                     </div>
-                  ))}
+                    <div className="text-lg text-blue-200 font-bold">{formatDuration(sessionMs)}</div>
+                  </div>
+                  <Droppable droppableId={session.id}>
+                    {(provided) => (
+                      <div className="flex flex-col gap-2 mb-1" ref={provided.innerRef} {...provided.droppableProps}>
+                        {session.quests.map((quest, idx) => (
+                          <Draggable key={quest.id} draggableId={quest.id} index={idx}>
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`flex items-center justify-between gap-2 py-1 bg-transparent ${snapshot.isDragging ? 'opacity-80' : ''}`}
+                                style={{ ...provided.draggableProps.style }}
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <input type="checkbox" checked={quest.status === 'completed'} onChange={() => updateQuestStatus(session.id, quest.id, quest.status === 'completed' ? 'pending' : 'completed')} className="w-5 h-5 rounded border-2 border-blue-300 bg-[#22305a] focus:ring-0" />
+                                  <span className={`text-lg font-bold truncate ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+                                  <span className="text-lg md:text-xl flex-shrink-0">{quest.emoji}</span>
+                                  <span className="text-base text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                                  <span className="flex items-center ml-1">
+                                    <button onClick={() => setEditQuestData({ sessionId: session.id, quest })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
+                                    <button onClick={() => deleteQuest(session.id, quest.id)} className="text-blue-200 hover:text-red-400 text-base p-1" title="Delete" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                  <button onClick={() => setAddQuestSessionId(session.id)} className="text-blue-300 text-lg font-bold mt-1 hover:underline text-left w-fit">+ Add Quest</button>
                 </div>
-                <button onClick={() => setAddQuestSessionId(session.id)} className="text-blue-300 text-lg font-bold mt-1 hover:underline text-left w-fit">+ Add Quest</button>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </DragDropContext>
         {/* Add Nap Session Button */}
         <div className="w-full flex flex-col items-center mt-8">
           {showAddNap ? (
@@ -412,4 +448,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
