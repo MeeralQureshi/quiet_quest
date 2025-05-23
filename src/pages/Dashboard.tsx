@@ -4,7 +4,6 @@ import NapSessionCard from '../components/NapSessionCard';
 import QuestCard from '../components/QuestCard';
 import { NapSession, Quest } from '../types';
 import { getNapSessions, saveNapSessions, resetDailyData } from '../utils/storage';
-import NapTimer from '../components/NapTimer';
 import AddQuestModal from '../components/AddQuestModal';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
@@ -289,14 +288,6 @@ const Dashboard: React.FC = () => {
           </div>
           <p className="mt-2 text-lg md:text-xl text-blue-200 font-medium tracking-wide text-center">Your magical quest begins when the baby naps.</p>
         </div>
-        {/* Nap Timer Card */}
-        <NapTimer 
-          napSessions={napSessions}
-          onSessionsUpdate={(sessions) => {
-            setNapSessions(sessions);
-            saveNapSessions(sessions);
-          }}
-        />
         {/* Nap Sessions Section */}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="napSessions" type="SESSION">
