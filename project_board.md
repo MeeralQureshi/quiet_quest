@@ -36,7 +36,6 @@
 
 ## 🔧 In Progress
 - [ ] Nap timer logic (setInterval & state sync)
-- [ ] Re-order quests within a nap
 
 ---
 
@@ -55,6 +54,7 @@
 - [x] Edit/Delete Quest
 - [x] Delete/edit nap sessions
 - [x] Mark quest as In Progress / Done
+- [x] Re-order quests within a nap
 
 
 ---

@@ -6,6 +6,8 @@ interface NapSessionCardProps {
   duration: string;
   children: React.ReactNode;
   onAddQuest: (sessionId: string) => void;
+  isActive?: boolean;
+  onClick?: () => void;
 }
 
 const NapSessionCard: React.FC<NapSessionCardProps> = ({
@@ -13,17 +15,19 @@ const NapSessionCard: React.FC<NapSessionCardProps> = ({
   duration,
   children,
   onAddQuest,
+  isActive = false,
+  onClick,
 }) => {
   return (
-    <div className="w-full bg-[#31416a] rounded-3xl shadow-xl px-6 py-5 mb-7 flex flex-col">
+    <div 
+      className={`w-full bg-[#31416a] rounded-3xl shadow-xl px-6 py-5 mb-7 flex flex-col cursor-pointer transition-all ${
+        isActive ? 'ring-4 ring-blue-400 transform scale-[1.02]' : 'hover:bg-[#3a4d7a]'
+      }`}
+      onClick={onClick}
+    >
       <div className="flex justify-between items-center mb-2">
         <span className="text-xl font-extrabold text-white tracking-tight">{session.name}</span>
         <span className="text-lg font-bold text-blue-200">{duration}</span>
-      </div>
-      <div className="flex justify-between text-blue-200 text-xs font-bold mb-2 px-1">
-        <span>TO DO</span>
-        <span>IN PROGRESS</span>
-        <span>DONE</span>
       </div>
       <div className="flex flex-col gap-2 mb-2">
         {children}
