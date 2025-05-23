@@ -4,7 +4,7 @@
 
 ---
 
-## 📥 Backlog
+## 📥 Extended Backlog
 
 - [ ] Daily quest suggestions based on nap length and energy
 - [ ] Share stats with friends / social integration
@@ -23,19 +23,18 @@
 - [ ] Countdown with pause/resume
 - [ ] Motivational messages + soft visuals
 
+### 💤 Nap Sessions
+- [ ] Start/stop nap timer per session
+- [ ] Save nap duration
+
 ---
 
 ## ✅ To Do
 
-### 💤 Nap Sessions
-- [ ] Start/stop nap timer per session
-- [ ] Save nap duration
-- [ ] Reset nap data daily
-
 ---
 
 ## 🔧 In Progress
-- [ ] Nap timer logic (setInterval & state sync)
+- [ ] Reset nap data daily
 
 ---
 
