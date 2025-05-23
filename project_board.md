@@ -18,22 +18,6 @@
 - [ ] Display daily streak
 - [ ] Store stats locally
 
----
-
-## ✅ To Do
-
-### 💤 Nap Sessions
-- [ ] Start/stop nap timer per session
-- [ ] Save nap duration
-- [ ] Delete/edit nap sessions
-- [ ] Reset nap data daily
-
-### 📋 Quest Management (Per Nap)
-- [ ] Visual indicator for energy level & time estimate
-
-### 🔄 Quest Status Flow
-- [ ] Filter or separate quests by status within nap
-
 ### 🌙 Focus Mode
 - [ ] Enter Focus Mode for selected Quest
 - [ ] Countdown with pause/resume
@@ -41,14 +25,23 @@
 
 ---
 
+## ✅ To Do
+
+### 💤 Nap Sessions
+- [ ] Start/stop nap timer per session
+- [ ] Save nap duration
+- [ ] Reset nap data daily
+
+---
+
 ## 🔧 In Progress
-- [ ] Edit/Delete Quest
-- [ ] Mark quest as In Progress / Done
 - [ ] Nap timer logic (setInterval & state sync)
+- [ ] Re-order quests within a nap
 
 ---
 
 ## ✅ Done
+
 - [x] React + Tailwind setup
 - [x] Create new nap session (e.g., Morning Nap)
 - [x] Add Quest to a specific nap session
@@ -58,6 +51,10 @@
 - [x] Nap cards + Quest list styled with TailwindCSS
 - [x] Fun emoji support
 - [x] Rounded corners, soft drop shadows, cozy UI
+- [x] Visual indicator for energy level & time estimate
+- [x] Edit/Delete Quest
+- [x] Delete/edit nap sessions
+- [x] Mark quest as In Progress / Done
 
 
 ---
