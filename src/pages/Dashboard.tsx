@@ -274,7 +274,10 @@ const Dashboard: React.FC = () => {
                         <input type="checkbox" checked={quest.status === 'completed'} onChange={() => updateQuestStatus(session.id, quest.id, quest.status === 'completed' ? 'pending' : 'completed')} className="w-5 h-5 rounded border-2 border-blue-300 bg-[#22305a] focus:ring-0" />
                         <span className={`text-lg font-bold ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
                       </div>
-                      <span className="text-lg text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                      <div className="flex items-center gap-3 min-w-0 ml-2">
+                        <span className="text-xl md:text-2xl flex-shrink-0">{quest.emoji}</span>
+                        <span className="text-lg text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                      </div>
                     </div>
                   ))}
                 </div>
