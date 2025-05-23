@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 interface AddQuestModalProps {
   onAdd: (quest: { title: string; estimatedTime: number; energyLevel: string }) => void;
   onClose: () => void;
+  initialTitle?: string;
+  initialEstimatedTime?: number;
+  initialEnergyLevel?: '🧘' | '⚡' | '🚀';
+  isEdit?: boolean;
 }
 
 const timeOptions = [15, 30, 60];
@@ -12,10 +16,10 @@ const energyOptions = [
   { value: '🚀', label: 'High' },
 ];
 
-const AddQuestModal: React.FC<AddQuestModalProps> = ({ onAdd, onClose }) => {
-  const [title, setTitle] = useState('');
-  const [estimatedTime, setEstimatedTime] = useState(15);
-  const [energyLevel, setEnergyLevel] = useState('🧘');
+const AddQuestModal: React.FC<AddQuestModalProps> = ({ onAdd, onClose, initialTitle = '', initialEstimatedTime = 15, initialEnergyLevel = '🧘', isEdit = false }) => {
+  const [title, setTitle] = useState(initialTitle);
+  const [estimatedTime, setEstimatedTime] = useState(initialEstimatedTime);
+  const [energyLevel, setEnergyLevel] = useState(initialEnergyLevel);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +35,7 @@ const AddQuestModal: React.FC<AddQuestModalProps> = ({ onAdd, onClose }) => {
         onClick={e => e.stopPropagation()}
         onSubmit={handleSubmit}
       >
-        <h2 className="text-4xl font-extrabold text-[#f7f3e8] mb-8 tracking-tight">Add Quest</h2>
+        <h2 className="text-4xl font-extrabold text-[#f7f3e8] mb-8 tracking-tight">{isEdit ? 'Edit Quest' : 'Add Quest'}</h2>
         <input
           className="w-full bg-[#f7f3e8] text-[#18305a] text-2xl font-bold rounded-2xl px-6 py-4 mb-8 focus:outline-none placeholder-[#18305a]/60"
           placeholder="Organize closet"
@@ -62,7 +66,7 @@ const AddQuestModal: React.FC<AddQuestModalProps> = ({ onAdd, onClose }) => {
                 type="button"
                 key={opt.value}
                 className={`flex-1 rounded-2xl px-6 py-4 text-2xl font-bold transition-all focus:outline-none ${energyLevel === opt.value ? 'bg-[#22305a] text-[#f7f3e8] ring-2 ring-[#f7f3e8]' : 'bg-[#22305a]/70 text-[#f7f3e8]/70'}`}
-                onClick={() => setEnergyLevel(opt.value)}
+                onClick={() => setEnergyLevel(opt.value as '🧘' | '⚡' | '🚀')}
               >
                 {opt.value}
               </button>
@@ -74,7 +78,7 @@ const AddQuestModal: React.FC<AddQuestModalProps> = ({ onAdd, onClose }) => {
           className={`w-full rounded-2xl py-4 text-2xl font-extrabold transition-all ${title.trim() ? 'bg-[#22305a] text-[#f7f3e8] hover:bg-[#2c3e50]' : 'bg-[#22305a]/60 text-[#f7f3e8]/60 cursor-not-allowed'}`}
           disabled={!title.trim()}
         >
-          Add Quest
+          {isEdit ? 'Save Changes' : 'Add Quest'}
         </button>
       </form>
     </div>

@@ -72,6 +72,7 @@ const Dashboard: React.FC = () => {
   const [timerActive, setTimerActive] = React.useState(true);
   const [showAddNap, setShowAddNap] = React.useState(false);
   const [addQuestSessionId, setAddQuestSessionId] = React.useState<string | null>(null);
+  const [editQuestData, setEditQuestData] = useState<{ sessionId: string; quest: Quest } | null>(null);
 
   useEffect(() => {
     // Reset daily data on component mount
@@ -269,14 +270,18 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-2 mb-1">
                   {session.quests.map(quest => (
-                    <div key={quest.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div key={quest.id} className="flex items-center justify-between gap-2 py-1">
+                      <div className="flex items-center gap-2 min-w-0">
                         <input type="checkbox" checked={quest.status === 'completed'} onChange={() => updateQuestStatus(session.id, quest.id, quest.status === 'completed' ? 'pending' : 'completed')} className="w-5 h-5 rounded border-2 border-blue-300 bg-[#22305a] focus:ring-0" />
-                        <span className={`text-lg font-bold ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
+                        <span className={`text-lg font-bold truncate ${quest.status === 'completed' ? 'line-through text-blue-300' : 'text-white'}`}>{quest.title}</span>
                       </div>
-                      <div className="flex items-center gap-3 min-w-0 ml-2">
-                        <span className="text-xl md:text-2xl flex-shrink-0">{quest.emoji}</span>
-                        <span className="text-lg text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                      <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+                        <span className="text-lg md:text-xl flex-shrink-0">{quest.emoji}</span>
+                        <span className="text-base text-blue-200 font-bold">{quest.estimatedTime} m</span>
+                        <span className="flex items-center ml-1">
+                          <button onClick={() => setEditQuestData({ sessionId: session.id, quest })} className="text-blue-200 hover:text-blue-400 text-base p-1" title="Edit" style={{lineHeight:1}}><span role="img" aria-label="Edit">✏️</span></button>
+                          <button onClick={() => deleteQuest(session.id, quest.id)} className="text-blue-200 hover:text-red-400 text-base p-1 ml-0.5" title="Delete" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -328,6 +333,25 @@ const Dashboard: React.FC = () => {
           <AddQuestModal
             onAdd={quest => handleAddQuest(addQuestSessionId, quest)}
             onClose={() => setAddQuestSessionId(null)}
+          />
+        )}
+        {/* Edit Quest Modal */}
+        {editQuestData && (
+          <AddQuestModal
+            onAdd={quest => {
+              editQuest(editQuestData.sessionId, editQuestData.quest.id, {
+                title: quest.title,
+                estimatedTime: quest.estimatedTime,
+                energyLevel: quest.energyLevel as '🧘' | '⚡' | '🚀',
+                emoji: quest.energyLevel as '🧘' | '⚡' | '🚀',
+              });
+              setEditQuestData(null);
+            }}
+            onClose={() => setEditQuestData(null)}
+            initialTitle={editQuestData.quest.title}
+            initialEstimatedTime={editQuestData.quest.estimatedTime}
+            initialEnergyLevel={editQuestData.quest.energyLevel}
+            isEdit
           />
         )}
       </div>
