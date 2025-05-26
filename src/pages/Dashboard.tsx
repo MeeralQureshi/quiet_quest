@@ -266,33 +266,45 @@ const Dashboard: React.FC = () => {
         <div className="w-full flex flex-col items-center mt-8">
           {showAddNap ? (
             <div className="w-full flex flex-col items-center mb-4">
-              <input
-                type="text"
-                value={newNapName}
-                onChange={(e) => setNewNapName(e.target.value)}
-                placeholder="Enter nap session name..."
-                className="w-full bg-[#31416a] text-white px-6 py-4 rounded-2xl font-bold placeholder-blue-200/70 mb-4 border-2 border-blue-300/30 outline-none focus:border-blue-300/70 shadow-lg text-lg"
-                autoFocus
-              />
-              <div className="flex gap-4 w-full">
-                <button
-                  onClick={createNapSession}
-                  className={`flex-1 font-extrabold py-4 rounded-2xl shadow-lg transition-all text-lg ${
-                    newNapName.trim() 
-                      ? 'bg-[#22305a] text-blue-200 hover:bg-[#31416a] hover:text-blue-100 border-2 border-blue-300' 
-                      : 'bg-[#22305a]/40 text-blue-200/50 cursor-not-allowed border-2 border-blue-300/30'
-                  }`}
-                  disabled={!newNapName.trim()}
-                >
-                  Add
-                </button>
-                <button
-                  onClick={() => { setShowAddNap(false); setNewNapName(''); }}
-                  className="flex-1 bg-gray-500/30 text-gray-300 font-extrabold py-4 rounded-2xl shadow-lg hover:bg-gray-600/40 hover:text-blue-200 transition-all text-lg border-2 border-gray-400/30"
-                >
-                  Cancel
-                </button>
-              </div>
+              <form 
+                className="w-full"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newNapName.trim()) {
+                    createNapSession();
+                    setShowAddNap(false);
+                  }
+                }}
+              >
+                <input
+                  type="text"
+                  value={newNapName}
+                  onChange={(e) => setNewNapName(e.target.value)}
+                  placeholder="Enter nap session name..."
+                  className="w-full bg-[#31416a] text-white px-6 py-4 rounded-2xl font-bold placeholder-blue-200/70 mb-4 border-2 border-blue-300/30 outline-none focus:border-blue-300/70 shadow-lg text-lg"
+                  autoFocus
+                />
+                <div className="flex gap-4 w-full">
+                  <button
+                    type="submit"
+                    className={`flex-1 font-extrabold py-4 rounded-2xl shadow-lg transition-all text-lg ${
+                      newNapName.trim() 
+                        ? 'bg-[#22305a] text-blue-200 hover:bg-[#31416a] hover:text-blue-100 border-2 border-blue-300' 
+                        : 'bg-[#22305a]/40 text-blue-200/50 cursor-not-allowed border-2 border-blue-300/30'
+                    }`}
+                    disabled={!newNapName.trim()}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowAddNap(false); setNewNapName(''); }}
+                    className="flex-1 bg-gray-500/30 text-gray-300 font-extrabold py-4 rounded-2xl shadow-lg hover:bg-gray-600/40 hover:text-blue-200 transition-all text-lg border-2 border-gray-400/30"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
           ) : (
             <button
