@@ -6,26 +6,23 @@
 
 ## 📥 Extended Backlog
 
-- [ ] Daily quest suggestions based on nap length and energy
+- [ ] Daily quest suggestions based on energy
 - [ ] Share stats with friends / social integration
-- [ ] Mobile notifications for nap start/end
+- [ ] Mobile notifications
 - [ ] Sync across devices with account support
 - [ ] Animated mascot for each nap session
 
 ### 📈 Stats & Streaks
-- [ ] Track nap count + total nap time (per day)
+
 - [ ] Track completed quests per nap
 - [ ] Display daily streak
 - [ ] Store stats locally
 
 ### 🌙 Focus Mode
+
 - [ ] Enter Focus Mode for selected Quest
 - [ ] Countdown with pause/resume
 - [ ] Motivational messages + soft visuals
-
-### 💤 Nap Sessions
-- [ ] Start/stop nap timer per session
-- [ ] Save nap duration
 
 ---
 
@@ -34,6 +31,7 @@
 ---
 
 ## 🔧 In Progress
+
 - [ ] Reset nap data daily
 
 ---
@@ -54,6 +52,5 @@
 - [x] Delete/edit nap sessions
 - [x] Mark quest as In Progress / Done
 - [x] Re-order quests within a nap
-
 
 ---

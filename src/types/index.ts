@@ -1,8 +1,6 @@
 export interface NapSession {
   id: string;
   name: string;
-  startTime: number | null;
-  endTime: number | null;
   quests: Quest[];
   createdAt: number;
 }

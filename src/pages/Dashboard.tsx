@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import NapSessionCard from '../components/NapSessionCard';
 import QuestCard from '../components/QuestCard';
 import { NapSession, Quest } from '../types';
-import { getNapSessions, saveNapSessions, resetDailyData } from '../utils/storage';
+import { getNapSessions, saveNapSessions, checkAndResetDailyData } from '../utils/storage';
 import AddQuestModal from '../components/AddQuestModal';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
@@ -76,10 +76,20 @@ const Dashboard: React.FC = () => {
   const [activeNapId, setActiveNapId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reset daily data on component mount
-    resetDailyData();
+    // Check for daily reset on component mount
+    checkAndResetDailyData();
     const sessions = getNapSessions();
     setNapSessions(sessions);
+
+    // Set up periodic check for daily reset (every minute)
+    const resetInterval = setInterval(() => {
+      checkAndResetDailyData();
+      // Refresh sessions if reset occurred
+      const currentSessions = getNapSessions();
+      setNapSessions(currentSessions);
+    }, 60000);
+
+    return () => clearInterval(resetInterval);
   }, []);
 
   const createNapSession = () => {
@@ -88,8 +98,6 @@ const Dashboard: React.FC = () => {
     const newSession: NapSession = {
       id: uuidv4(),
       name: newNapName,
-      startTime: null,
-      endTime: null,
       quests: [],
       createdAt: Date.now(),
     };
