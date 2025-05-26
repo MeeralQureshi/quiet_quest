@@ -100,46 +100,6 @@ const Dashboard: React.FC = () => {
     setNewNapName('');
   };
 
-  const startTimer = (sessionId: string) => {
-    const updatedSessions = napSessions.map(session =>
-      session.id === sessionId
-        ? { ...session, startTime: Date.now(), endTime: null }
-        : session
-    );
-    setNapSessions(updatedSessions);
-    saveNapSessions(updatedSessions);
-  };
-
-  const stopTimer = (sessionId: string) => {
-    const updatedSessions = napSessions.map(session =>
-      session.id === sessionId
-        ? { ...session, endTime: Date.now() }
-        : session
-    );
-    setNapSessions(updatedSessions);
-    saveNapSessions(updatedSessions);
-  };
-
-  const addQuest = (sessionId: string) => {
-    const newQuest: Quest = {
-      id: uuidv4(),
-      title: 'New Quest',
-      estimatedTime: 30,
-      energyLevel: '🧘',
-      emoji: '📝',
-      status: 'pending',
-      createdAt: Date.now(),
-    };
-
-    const updatedSessions = napSessions.map(session =>
-      session.id === sessionId
-        ? { ...session, quests: [...session.quests, newQuest] }
-        : session
-    );
-    setNapSessions(updatedSessions);
-    saveNapSessions(updatedSessions);
-  };
-
   const updateQuestStatus = (sessionId: string, questId: string, status: Quest['status']) => {
     const updatedSessions = napSessions.map(session =>
       session.id === sessionId
@@ -198,54 +158,6 @@ const Dashboard: React.FC = () => {
     setEditSessionData(null);
   };
 
-  // Calculate total nap time for all sessions today
-  const totalNapMs = napSessions.reduce((sum, session) => {
-    if (session.startTime && session.endTime) {
-      return sum + (session.endTime - session.startTime);
-    }
-    return sum;
-  }, 0);
-
-  // Format ms to hh:mm:ss
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return [hours, minutes, seconds]
-      .map((v) => v.toString().padStart(2, '0'))
-      .join(':');
-  };
-
-  // Helper to format duration in ms to '1h 45m' style
-  const formatDuration = (ms: number) => {
-    const totalMinutes = Math.floor(ms / 1000 / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  };
-
-  // Add quest with modal data
-  const handleAddQuest = (sessionId: string, quest: { title: string; estimatedTime: number; energyLevel: string }) => {
-    const newQuest = {
-      id: uuidv4(),
-      title: quest.title,
-      estimatedTime: quest.estimatedTime,
-      energyLevel: quest.energyLevel as '🧘' | '⚡' | '🚀',
-      emoji: quest.energyLevel, // Default emoji to energy for now
-      status: 'pending' as const,
-      createdAt: Date.now(),
-    };
-    const updatedSessions = napSessions.map(session =>
-      session.id === sessionId
-        ? { ...session, quests: [...session.quests, newQuest] }
-        : session
-    );
-    setNapSessions(updatedSessions);
-    saveNapSessions(updatedSessions);
-    setAddQuestSessionId(null);
-  };
-
   // Update onDragEnd to handle nap session reordering
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -276,6 +188,27 @@ const Dashboard: React.FC = () => {
     }));
   };
 
+  // Add quest with modal data
+  const handleAddQuest = (sessionId: string, quest: { title: string; estimatedTime: number; energyLevel: string }) => {
+    const newQuest = {
+      id: uuidv4(),
+      title: quest.title,
+      estimatedTime: quest.estimatedTime,
+      energyLevel: quest.energyLevel as '🧘' | '⚡' | '🚀',
+      emoji: quest.energyLevel, // Default emoji to energy for now
+      status: 'pending' as const,
+      createdAt: Date.now(),
+    };
+    const updatedSessions = napSessions.map(session =>
+      session.id === sessionId
+        ? { ...session, quests: [...session.quests, newQuest] }
+        : session
+    );
+    setNapSessions(updatedSessions);
+    saveNapSessions(updatedSessions);
+    setAddQuestSessionId(null);
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden font-baloo bg-transparent">
       <StarryBackground />
@@ -293,63 +226,55 @@ const Dashboard: React.FC = () => {
           <Droppable droppableId="napSessions" type="SESSION">
             {(provided) => (
               <div className="w-full space-y-5" ref={provided.innerRef} {...provided.droppableProps}>
-                {napSessions.map((session, sessionIdx) => {
-                  // Calculate session duration
-                  let sessionMs = 0;
-                  if (session.startTime && session.endTime) {
-                    sessionMs = session.endTime - session.startTime;
-                  }
-                  return (
-                    <Draggable key={session.id} draggableId={session.id} index={sessionIdx}>
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={{ ...provided.draggableProps.style }}
+                {napSessions.map((session, sessionIdx) => (
+                  <Draggable key={session.id} draggableId={session.id} index={sessionIdx}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{ ...provided.draggableProps.style }}
+                      >
+                        <NapSessionCard
+                          session={session}
+                          isActive={activeNapId === session.id}
+                          onClick={() => setActiveNapId(session.id)}
+                          onAddQuest={() => setAddQuestSessionId(session.id)}
+                          onEdit={(sessionId) => setEditSessionData({ sessionId, name: session.name })}
+                          onDelete={deleteNapSession}
                         >
-                          <NapSessionCard
-                            session={session}
-                            duration={formatDuration(sessionMs)}
-                            isActive={activeNapId === session.id}
-                            onClick={() => setActiveNapId(session.id)}
-                            onAddQuest={() => setAddQuestSessionId(session.id)}
-                            onEdit={(sessionId) => setEditSessionData({ sessionId, name: session.name })}
-                            onDelete={deleteNapSession}
-                          >
-                            <Droppable droppableId={session.id}>
-                              {(provided) => (
-                                <div className="flex flex-col gap-2 mb-1" ref={provided.innerRef} {...provided.droppableProps}>
-                                  {session.quests.map((quest, idx) => (
-                                    <Draggable key={quest.id} draggableId={quest.id} index={idx}>
-                                      {(provided, snapshot) => (
-                                        <div
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}
-                                          style={{ ...provided.draggableProps.style }}
-                                        >
-                                          <QuestCard
-                                            quest={quest}
-                                            sessionId={session.id}
-                                            onStatusChange={updateQuestStatus}
-                                            onDelete={deleteQuest}
-                                            onEdit={(sessionId, quest) => setEditQuestData({ sessionId, quest })}
-                                          />
-                                        </div>
-                                      )}
-                                    </Draggable>
-                                  ))}
-                                  {provided.placeholder}
-                                </div>
-                              )}
-                            </Droppable>
-                          </NapSessionCard>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })}
+                          <Droppable droppableId={session.id}>
+                            {(provided) => (
+                              <div className="flex flex-col gap-2 mb-1" ref={provided.innerRef} {...provided.droppableProps}>
+                                {session.quests.map((quest, idx) => (
+                                  <Draggable key={quest.id} draggableId={quest.id} index={idx}>
+                                    {(provided) => (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        style={{ ...provided.draggableProps.style }}
+                                      >
+                                        <QuestCard
+                                          quest={quest}
+                                          sessionId={session.id}
+                                          onStatusChange={updateQuestStatus}
+                                          onDelete={deleteQuest}
+                                          onEdit={(sessionId, quest) => setEditQuestData({ sessionId, quest })}
+                                        />
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </NapSessionCard>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
                 {provided.placeholder}
               </div>
             )}

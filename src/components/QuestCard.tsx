@@ -16,12 +16,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onDelete,
   onEdit,
 }) => {
-  // Color for energy level
-  const energyColors: Record<Quest['energyLevel'], string> = {
-    '🧘': 'bg-blue-300 text-blue-900',
-    '⚡': 'bg-yellow-200 text-yellow-800',
-    '🚀': 'bg-yellow-300 text-yellow-900',
-  };
 
   return (
     <div className="flex items-center justify-between gap-2 py-1 bg-transparent">

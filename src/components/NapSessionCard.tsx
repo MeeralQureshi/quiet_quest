@@ -3,7 +3,6 @@ import { NapSession } from '../types';
 
 interface NapSessionCardProps {
   session: NapSession;
-  duration: string;
   children: React.ReactNode;
   onAddQuest: (sessionId: string) => void;
   onEdit?: (sessionId: string) => void;
@@ -14,7 +13,6 @@ interface NapSessionCardProps {
 
 const NapSessionCard: React.FC<NapSessionCardProps> = ({
   session,
-  duration,
   children,
   onAddQuest,
   onEdit,
@@ -43,7 +41,6 @@ const NapSessionCard: React.FC<NapSessionCardProps> = ({
             }} className="text-blue-200 hover:text-red-400 text-base p-1" title="Delete Session" style={{lineHeight:1}}><span role="img" aria-label="Delete">🗑️</span></button>
           </span>
         </div>
-        <span className="text-lg font-bold text-blue-200">{duration}</span>
       </div>
       <div className="flex flex-col gap-2 mb-2">
         {children}
