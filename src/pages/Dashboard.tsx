@@ -73,7 +73,6 @@ const Dashboard: React.FC = () => {
   const [addQuestSessionId, setAddQuestSessionId] = React.useState<string | null>(null);
   const [editQuestData, setEditQuestData] = useState<{ sessionId: string; quest: Quest } | null>(null);
   const [editSessionData, setEditSessionData] = useState<{ sessionId: string; name: string } | null>(null);
-  const [activeNapId, setActiveNapId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for daily reset on component mount
@@ -245,8 +244,6 @@ const Dashboard: React.FC = () => {
                       >
                         <NapSessionCard
                           session={session}
-                          isActive={activeNapId === session.id}
-                          onClick={() => setActiveNapId(session.id)}
                           onAddQuest={() => setAddQuestSessionId(session.id)}
                           onEdit={(sessionId) => setEditSessionData({ sessionId, name: session.name })}
                           onDelete={deleteNapSession}
