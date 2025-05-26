@@ -7,7 +7,6 @@ interface NapSessionCardProps {
   onAddQuest: (sessionId: string) => void;
   onEdit?: (sessionId: string) => void;
   onDelete?: (sessionId: string) => void;
-  onClick?: () => void;
 }
 
 const NapSessionCard: React.FC<NapSessionCardProps> = ({
@@ -16,12 +15,10 @@ const NapSessionCard: React.FC<NapSessionCardProps> = ({
   onAddQuest,
   onEdit,
   onDelete,
-  onClick,
 }) => {
   return (
     <div 
-      className="w-full bg-[#31416a] rounded-3xl shadow-xl px-6 py-5 mb-7 flex flex-col cursor-pointer transition-all hover:bg-[#3a4d7a]"
-      onClick={onClick}
+      className="w-full bg-[#31416a] rounded-3xl shadow-xl px-6 py-5 mb-7 flex flex-col transition-all hover:bg-[#3a4d7a]"
     >
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">

@@ -165,22 +165,11 @@ const Dashboard: React.FC = () => {
     setEditSessionData(null);
   };
 
-  // Update onDragEnd to handle nap session reordering
+  // Update onDragEnd to only handle quest reordering
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const { source, destination } = result;
-    // Reorder nap sessions
-    if (source.droppableId === 'napSessions' && destination.droppableId === 'napSessions') {
-      if (source.index === destination.index) return;
-      setNapSessions(prevSessions => {
-        const sessions = Array.from(prevSessions);
-        const [removed] = sessions.splice(source.index, 1);
-        sessions.splice(destination.index, 0, removed);
-        saveNapSessions(sessions);
-        return sessions;
-      });
-      return;
-    }
+    
     // Only allow reordering within the same nap session for quests
     if (source.droppableId !== destination.droppableId) return;
     if (source.index === destination.index) return;
@@ -230,60 +219,48 @@ const Dashboard: React.FC = () => {
         </div>
         {/* Nap Sessions Section */}
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="napSessions" type="SESSION">
-            {(provided) => (
-              <div className="w-full space-y-5" ref={provided.innerRef} {...provided.droppableProps}>
-                {napSessions.map((session, sessionIdx) => (
-                  <Draggable key={session.id} draggableId={session.id} index={sessionIdx}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style }}
-                      >
-                        <NapSessionCard
-                          session={session}
-                          onAddQuest={() => setAddQuestSessionId(session.id)}
-                          onEdit={(sessionId) => setEditSessionData({ sessionId, name: session.name })}
-                          onDelete={deleteNapSession}
-                        >
-                          <Droppable droppableId={session.id}>
-                            {(provided) => (
-                              <div className="flex flex-col gap-2 mb-1" ref={provided.innerRef} {...provided.droppableProps}>
-                                {session.quests.map((quest, idx) => (
-                                  <Draggable key={quest.id} draggableId={quest.id} index={idx}>
-                                    {(provided) => (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        style={{ ...provided.draggableProps.style }}
-                                      >
-                                        <QuestCard
-                                          quest={quest}
-                                          sessionId={session.id}
-                                          onStatusChange={updateQuestStatus}
-                                          onDelete={deleteQuest}
-                                          onEdit={(sessionId, quest) => setEditQuestData({ sessionId, quest })}
-                                        />
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                ))}
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
-                        </NapSessionCard>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+          <div className="w-full space-y-5">
+            {napSessions.map(session => (
+              <NapSessionCard
+                key={session.id}
+                session={session}
+                onAddQuest={() => setAddQuestSessionId(session.id)}
+                onEdit={(sessionId) => setEditSessionData({ sessionId, name: session.name })}
+                onDelete={deleteNapSession}
+              >
+                <Droppable droppableId={session.id}>
+                  {(provided) => (
+                    <div 
+                      className="flex flex-col gap-2 mb-1" 
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {session.quests.map((quest, idx) => (
+                        <Draggable key={quest.id} draggableId={quest.id} index={idx}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <QuestCard
+                                quest={quest}
+                                sessionId={session.id}
+                                onStatusChange={updateQuestStatus}
+                                onDelete={deleteQuest}
+                                onEdit={(sessionId, quest) => setEditQuestData({ sessionId, quest })}
+                              />
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </NapSessionCard>
+            ))}
+          </div>
         </DragDropContext>
         {/* Add Nap Session Button */}
         <div className="w-full flex flex-col items-center mt-8">
@@ -294,20 +271,24 @@ const Dashboard: React.FC = () => {
                 value={newNapName}
                 onChange={(e) => setNewNapName(e.target.value)}
                 placeholder="Enter nap session name..."
-                className="w-full bg-[#34495E] text-white px-4 py-3 rounded-2xl font-light placeholder-gray-400 mb-2 border-none outline-none shadow-md"
+                className="w-full bg-[#31416a] text-white px-6 py-4 rounded-2xl font-bold placeholder-blue-200/70 mb-4 border-2 border-blue-300/30 outline-none focus:border-blue-300/70 shadow-lg text-lg"
                 autoFocus
               />
-              <div className="flex gap-2 w-full">
+              <div className="flex gap-4 w-full">
                 <button
                   onClick={createNapSession}
-                  className={`flex-1 font-bold py-2 rounded-2xl shadow transition ${newNapName.trim() ? 'bg-blue-400 text-white hover:bg-blue-500' : 'bg-blue-200 text-blue-100 cursor-not-allowed'}`}
+                  className={`flex-1 font-extrabold py-4 rounded-2xl shadow-lg transition-all text-lg ${
+                    newNapName.trim() 
+                      ? 'bg-[#22305a] text-blue-200 hover:bg-[#31416a] hover:text-blue-100 border-2 border-blue-300' 
+                      : 'bg-[#22305a]/40 text-blue-200/50 cursor-not-allowed border-2 border-blue-300/30'
+                  }`}
                   disabled={!newNapName.trim()}
                 >
                   Add
                 </button>
                 <button
                   onClick={() => { setShowAddNap(false); setNewNapName(''); }}
-                  className="flex-1 bg-gray-400 text-white font-bold py-2 rounded-2xl shadow hover:bg-gray-500 transition"
+                  className="flex-1 bg-gray-500/30 text-gray-300 font-extrabold py-4 rounded-2xl shadow-lg hover:bg-gray-600/40 hover:text-blue-200 transition-all text-lg border-2 border-gray-400/30"
                 >
                   Cancel
                 </button>
@@ -316,7 +297,7 @@ const Dashboard: React.FC = () => {
           ) : (
             <button
               onClick={() => setShowAddNap(true)}
-              className="w-full bg-[#25325a] text-blue-200 font-extrabold text-2xl py-5 rounded-3xl shadow-lg flex items-center justify-center hover:bg-[#31416a] transition border-2 border-blue-300 mt-2"
+              className="w-full bg-[#25325a] text-blue-200 font-extrabold text-2xl py-5 rounded-3xl shadow-lg flex items-center justify-center hover:bg-[#31416a] hover:text-blue-100 transition border-2 border-blue-300 mt-2"
             >
               + Add Nap Session
             </button>
