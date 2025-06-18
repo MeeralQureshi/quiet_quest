@@ -32,12 +32,11 @@
 
 ## 🔧 In Progress
 
-- [ ] Reset nap data daily
-
 ---
 
 ## ✅ Done
 
+- [x] Reset nap data daily
 - [x] React + Tailwind setup
 - [x] Create new nap session (e.g., Morning Nap)
 - [x] Add Quest to a specific nap session
