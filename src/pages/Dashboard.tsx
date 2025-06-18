@@ -217,6 +217,28 @@ const Dashboard: React.FC = () => {
           </div>
           <p className="mt-2 text-lg md:text-xl text-blue-200 font-medium tracking-wide text-center">Your magical quest begins when the baby naps.</p>
         </div>
+        {/* Empty State */}
+        {napSessions.length === 0 && (
+          <div className="w-full text-center py-16 px-4 relative">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-32 h-32 rounded-full bg-blue-400/10 blur-2xl animate-pulse"></div>
+            </div>
+            <div className="relative">
+              <span className="text-6xl mb-6 block animate-float" role="img" aria-label="moon">🌙</span>
+              <p className="text-2xl text-blue-200 font-medium tracking-wide mb-4">
+                Add your first nap session
+              </p>
+              <p className="text-xl text-blue-300/80 font-medium tracking-wide">
+                to get started on your magical journey
+              </p>
+              <div className="flex justify-center gap-2 mt-6">
+                <span className="text-2xl animate-sparkle-1" role="img" aria-label="sparkle">✨</span>
+                <span className="text-2xl animate-sparkle-2" role="img" aria-label="sparkle">✨</span>
+                <span className="text-2xl animate-sparkle-3" role="img" aria-label="sparkle">✨</span>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Nap Sessions Section */}
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="w-full space-y-5">

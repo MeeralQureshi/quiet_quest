@@ -143,3 +143,61 @@ input[type="checkbox"] {
 ::-webkit-scrollbar-thumb:hover {
   background: #95A5A6;
 }
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes sparkle-1 {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes sparkle-2 {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sparkle-3 {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.7);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-sparkle-1 {
+  animation: sparkle-1 2s ease-in-out infinite;
+}
+
+.animate-sparkle-2 {
+  animation: sparkle-2 2s ease-in-out infinite;
+}
+
+.animate-sparkle-3 {
+  animation: sparkle-3 2s ease-in-out infinite;
+}
